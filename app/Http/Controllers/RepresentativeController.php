@@ -59,8 +59,8 @@ class RepresentativeController extends Controller
             'Wholesale_Return' => $transactions->where('type', 'Wholesale Return')->count(),
             'date'=>$transactions->first()->file->month.'-'.$transactions->first()->file->year,
         ];
-        return $date;
-        return view('pages.representatives.partials.show', compact('representative', 'transactions', 'value_income', 'value_output', 'value_gift', 'quantity_gift', 'quantity_product', 'type'));
+        // return $date;
+        return view('pages.representatives.partials.show', compact('representative', 'transactions', 'date'));
     }
 
     public function edit(Representative $representative)

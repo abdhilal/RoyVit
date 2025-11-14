@@ -40,6 +40,8 @@
                 <th>{{ __('Representative') }}</th>
                 <th>{{ __('Value Income') }}</th>
                 <th>{{ __('Value Output') }}</th>
+                <th>{{ __('Quantity Product') }}</th>
+                <th>{{ __('Quantity Gift') }}</th>
                 <th>{{ __('actions') }}</th>
               </tr>
             </thead>
@@ -52,6 +54,9 @@
                   <td>{{ $transaction->representative?->name }}</td>
                   <td>{{ $transaction->value_income }}</td>
                   <td>{{ $transaction->value_output }}</td>
+                  <td>{{ $transaction->quantity_product }}</td>
+                  <td>{{ $transaction->quantity_gift }}</td>
+                  
                   <td>
                     <x-show :action="route('transactions.show', $transaction)" />
                     <x-edit :action="route('transactions.edit', $transaction)" />

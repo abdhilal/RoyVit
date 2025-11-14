@@ -27,8 +27,7 @@ class TransactionService
                   $ph->where('name', 'LIKE', "%{$term}%");
               })
               ->orWhereHas('representative', function ($r) use ($term) {
-                  $r->where('name', 'LIKE', "%{$term}%")
-                    ->orWhere('email', 'LIKE', "%{$term}%");
+                  $r->where('name', 'LIKE', "%{$term}%");
               })
               ->orWhereHas('factory', function ($f) use ($term) {
                   $f->where('name', 'LIKE', "%{$term}%");
