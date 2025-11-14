@@ -39,7 +39,11 @@
                                 @forelse ($representatives as $index => $representative)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $representative->name }}</td>
+                                        <td>
+                                            <a href="{{ route('representatives.show', $representative) }}" class="text-decoration-none">
+                                                {{ $representative->name }}
+                                            </a>
+                                        </td>
                                         <td>{{ $representative->area->name }}</td>
                                         <td>{{ $representative->warehouse?->name }}</td>
                                         <td>

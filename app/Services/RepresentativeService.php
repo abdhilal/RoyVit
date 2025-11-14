@@ -42,4 +42,5 @@ class RepresentativeService
     {
         return $representative->delete();
     }
+
 }

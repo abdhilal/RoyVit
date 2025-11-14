@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Representative;
 use Illuminate\Support\Facades\Hash;
@@ -45,8 +46,21 @@ class RepresentativeController extends Controller
 
     public function show(Representative $representative)
     {
-        $representative->load(['warehouse', 'area']);
-        return view('pages.representatives.partials.show', compact('representative'));
+        $representative->load(['warehouse', 'area', 'pharmacies.area', 'pharmacies.warehouse']);
+        $transactions = Transaction::with(['product', 'pharmacy', 'file'])->where('representative_id', $representative->id)->get();
+
+        $date = [
+            'value_income' => $transactions->sum('value_income'),
+            'value_output' => $transactions->sum('value_output'),
+            'value_gift' => $transactions->sum('value_gift'),
+            'quantity_gift' => $transactions->sum('quantity_gift'),
+            'quantity_product' => $transactions->sum('quantity_product'),
+            'Wholesale_Sale' => $transactions->where('type', 'Wholesale Sale')->count(),
+            'Wholesale_Return' => $transactions->where('type', 'Wholesale Return')->count(),
+            'date'=>$transactions->first()->file->month.'-'.$transactions->first()->file->year,
+        ];
+        return $date;
+        return view('pages.representatives.partials.show', compact('representative', 'transactions', 'value_income', 'value_output', 'value_gift', 'quantity_gift', 'quantity_product', 'type'));
     }
 
     public function edit(Representative $representative)
@@ -71,4 +85,6 @@ class RepresentativeController extends Controller
         return redirect()->back()
             ->with('success', __('Representative deleted successfully.'));
     }
+
+
 }

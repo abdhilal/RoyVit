@@ -45,6 +45,42 @@
             </tbody>
           </table>
         </div>
+        <hr />
+        <h5 class="mt-4 mb-3">{{ __('Pharmacies') }}</h5>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Area') }}</th>
+                <th>{{ __('Warehouse') }}</th>
+                <th>{{ __('actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($representative->pharmacies as $index => $pharmacy)
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td>
+                    <a href="{{ route('pharmacies.show', $pharmacy) }}" class="text-decoration-none">
+                      {{ $pharmacy->name }}
+                    </a>
+                  </td>
+                  <td>{{ $pharmacy->area?->name }}</td>
+                  <td>{{ $pharmacy->warehouse?->name }}</td>
+                  <td>
+                    <x-show :action="route('pharmacies.show', $pharmacy)" />
+                  </td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="5">{{ __('No pharmacies found') }}</td>
+                </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
