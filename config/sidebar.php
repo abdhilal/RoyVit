@@ -18,6 +18,7 @@ return [
                 ['label' => 'Areas', 'icon' => 'Map', 'route' => 'areas.index'],
                 ['label' => 'Factories', 'icon' => 'Layers', 'route' => 'factories.index'],
                 ['label' => 'Products', 'icon' => 'Package', 'route' => 'products.index'],
+                ['label' => 'Files', 'icon' => 'Paper', 'route' => 'files.index'],
             ]],
         ],
     ],

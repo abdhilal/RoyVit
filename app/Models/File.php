@@ -11,6 +11,7 @@ class File extends Model
     use HasFactory;
 
     protected $fillable = [
+        'code',
         'month',
         'year',
         'representative_id',

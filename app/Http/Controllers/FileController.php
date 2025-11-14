@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Exports\FilesExport;
+use App\Imports\FilesImport;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreFileRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateFileRequest;
 
@@ -31,19 +32,23 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreFileRequest $request)
     {
-        $data = $request;
-        $file = $request->file('file');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $path = $file->storeAs('uploads', $filename);
-        return response()->json([
-            'success' => true,
-            'name' => $file->getClientOriginalName(),
-            'month' => $data['month'],
-            'year' => $data['year'],
-            'path' => $path,
+
+
+
+        $fileRecord = File::create([
+            'code' => 'FILE-' . now()->timestamp,
+            'month' => $request->month,
+            'year'  => $request->year,
+            'representative_id' => auth()->user()->id
         ]);
+
+
+
+        $date = Excel::import(new FilesImport($fileRecord->id, auth()->user()->warehouse_id), $request->file('file'));
+
+        return $date;
     }
 
     /**

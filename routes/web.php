@@ -45,7 +45,9 @@ Route::middleware('auth')->group(function () {
         ->name('users.permissions.update');
 
     Route::get('/files/export', [FileController::class, 'export'])->name('files.export');
+    Route::get('/files/index', [FileController::class, 'index'])->name('files.index');
     Route::post('/files/store', [FileController::class, 'store'])->name('files.store');
+
 
 
     Route::view('/files/upload', 'pages.files.partials.create')->name('files.upload');
