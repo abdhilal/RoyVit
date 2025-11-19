@@ -47,9 +47,11 @@ class RepresentativeController extends Controller
 
     public function show(Representative $representative)
     {
-        $representative->load(['warehouse', 'pharmacies.area', 'pharmacies.warehouse']);
+        $representative->load(['warehouse', 'pharmacies.area', 'pharmacies.warehouse'])->whereHas('transactions', function ($q) {
+            $q->where('file_id', getDefaultFileId());
+        });
 
-        $transactions = Transaction::with(['product', 'pharmacy', 'file'])->where('representative_id', $representative->id)->get();
+        $transactions = Transaction::where('file_id', getDefaultFileId())->with(['product', 'pharmacy', 'file'])->where('representative_id', $representative->id)->get();
         $areas = Area::with('warehouse', 'transactions')
             ->whereHas('representatives', function ($query) use ($representative) {
                 $query->where('representative_id', $representative->id);

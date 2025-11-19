@@ -9,7 +9,9 @@ class PharmacyService
 {
     public function getPharmacies(Request $request = null)
     {
-        $query = Pharmacy::query()->with(['warehouse', 'area', 'representative']);
+        $query = Pharmacy::query()->with(['warehouse', 'area', 'representative'])->whereHas('transactions', function ($q) {
+            $q->where('file_id', getDefaultFileId());
+        });
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));
         }

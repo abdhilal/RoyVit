@@ -30,8 +30,8 @@ class RepresentativeMedicalController extends Controller
         foreach ($representativesMedical as $rep) {
             $areaIds = $rep->areas->pluck('id');
             $repAreaTotals[$rep->id] = [
-                'income' => (float) Transaction::whereIn('area_id', $areaIds)->sum('value_income'),
-                'output' => (float) Transaction::whereIn('area_id', $areaIds)->sum('value_output'),
+                'income' => (float) Transaction::where('file_id', getDefaultFileId())->whereIn('area_id', $areaIds)->sum('value_income'),
+                'output' => (float) Transaction::where('file_id', getDefaultFileId())->whereIn('area_id', $areaIds)->sum('value_output'),
             ];
         }
 
@@ -60,7 +60,7 @@ class RepresentativeMedicalController extends Controller
 
         $representative = Representative::with(['warehouse', 'areas'])->find($representativeId);
 
-        $transactions = Transaction::with(['product', 'pharmacy', 'file'])->whereIn('area_id', $representative->areas->pluck('id'))->get();
+        $transactions = Transaction::where('file_id', getDefaultFileId())->with(['product', 'pharmacy', 'file'])->whereIn('area_id', $representative->areas->pluck('id'))->get();
         $areas = Area::with('warehouse', 'transactions')->where('warehouse_id', $representative->warehouse_id)
             ->whereHas('representatives', function ($query) use ($representative) {
                 $query->where('representative_id', $representative->id);

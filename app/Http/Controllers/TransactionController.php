@@ -59,7 +59,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        $transaction->load(['warehouse','factory','pharmacy','representative','product']);
+        $transaction->load(['warehouse','factory','pharmacy','representative','product'])->where('file_id', getDefaultFileId());
         return view('pages.transactions.partials.show', compact('transaction'));
     }
 

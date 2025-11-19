@@ -50,7 +50,7 @@ class FilesImport implements OnEachRow
 
         // 2️⃣ المنطقة
         $area = Area::firstOrCreate(
-            ['name' => $areaName, 'warehouse_id' => $this->warehouseId]
+            ['name' => $areaName??'المنطقة', 'warehouse_id' => $this->warehouseId]
         );
 
         // 3️⃣ المندوب
@@ -96,13 +96,13 @@ class FilesImport implements OnEachRow
         Transaction::create([
             'type'              => $type,
             'pharmacy_id'       => $pharmacy->id,
-            'quantity_product'  => abs($quantityProduct),
+            'quantity_product' => abs((int) $quantityProduct),
             'product_id'        => $product->id,
-            'quantity_gift'     => abs($quantityGift),
-            'value_income'      => abs($valueIncome),
-            'value_output'      => abs($valueOutput),
+            'quantity_gift' => abs((int) $quantityGift),
+            'value_income' => abs((float) $valueIncome),
+            'value_output' => abs((float) $valueOutput),
             'representative_id' => $representative->id,
-            'value_gift'        => abs($valueGift),
+            'value_gift' => abs((float) $valueGift),
             'area_id'           => $area->id,
             'warehouse_id'      => $this->warehouseId,
             'file_id'           => $this->fileId,

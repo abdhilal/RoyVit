@@ -18,7 +18,7 @@ class PharmacyController extends Controller
     public function __construct(PharmacyService $service)
     {
         $this->service = $service;
- 
+
     }
     /**
      * Display a listing of the resource.
@@ -55,7 +55,9 @@ class PharmacyController extends Controller
      */
     public function show(Pharmacy $pharmacy)
     {
-        $pharmacy->load(['warehouse', 'area', 'representative']);
+        $pharmacy->load(['warehouse', 'area', 'representative'])->whereHas('transactions', function ($q) {
+            $q->where('file_id', getDefaultFileId());
+        });
         return view('pages.pharmacies.partials.show', compact('pharmacy'));
     }
 

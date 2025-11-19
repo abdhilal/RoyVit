@@ -13,7 +13,12 @@ class AreaService
         $user = $user ?? auth()->user();
         $query = Area::with('warehouse', 'transactions')
             ->withSum('transactions', 'value_income')
-            ->withSum('transactions', 'value_output');
+            ->withSum('transactions', 'value_output')
+            ->whereHas('transactions', function ($q) {
+                $q->where('file_id', getDefaultFileId());
+            });
+
+
 
 
 

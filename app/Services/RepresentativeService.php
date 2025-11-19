@@ -10,7 +10,9 @@ class RepresentativeService
 {
     public function getRepresentatives(Request $request = null)
     {
-        $query = Representative::query()
+        $query = Representative::query()->whereHas('transactions', function ($q) {
+            $q->where('file_id', getDefaultFileId());
+        })
             ->with(['warehouse'])
             ->withCount(['pharmacies', 'areas'])
             ->withSum('transactions', 'value_income')

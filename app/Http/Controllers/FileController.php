@@ -6,6 +6,7 @@ use App\Models\File;
 use App\Exports\FilesExport;
 use App\Imports\FilesImport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreFileRequest;
 use Illuminate\Support\Facades\Storage;
@@ -57,6 +58,7 @@ class FileController extends Controller
      */
     public function store(StoreFileRequest $request)
     {
+        DB::beginTransaction();
         $file = $request->file('file');
         $filename = 'FILE-' . now()->timestamp . '-00-' . $request['month'] . '-' . $request['year'] . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('uploads/files', $filename, 'public');
@@ -70,6 +72,7 @@ class FileController extends Controller
         ]);
 
         Excel::import(new FilesImport($fileRecord->id, auth()->user()->warehouse_id), $file);
+        DB::commit();
         return redirect()->route('files.index')
             ->with('success', __('File imported successfully.'));
     }
