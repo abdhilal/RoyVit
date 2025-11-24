@@ -8,6 +8,8 @@ return [
             [
                 'label' => 'users',
                 'icon' => 'Profile',
+                'permissions' => ['view-role', 'view-user', 'view-customer'],
+
                 'children' => [
 
                     ['label' => 'users.index', 'icon' => 'Users', 'route' => 'users.index'],
@@ -31,17 +33,5 @@ return [
             ]],
         ],
     ],
-    [
-        'title' => 'management',
-        'items' => [
-            [
-                'label' => 'content',
-                'icon' => 'Document',
-                'children' => [
-                    ['label' => 'categories', 'url' => '#'],
-                    ['label' => 'collections', 'url' => '#'],
-                ],
-            ],
-        ],
-    ],
+
 ];
