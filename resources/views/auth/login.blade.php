@@ -7,12 +7,7 @@
     <div class="col-12 p-0">
         <div class="login-card login-dark">
             <div>
-                <div>
-                    <a class="logo" href="/">
-                        <img class="img-fluid for-light m-auto" src="{{ asset('assets/images/logo/logo1.png') }}" alt="logo">
-                        <img class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo-dark.png') }}" alt="logo">
-                    </a>
-                </div>
+          
                 <div class="login-main">
                     <form class="theme-form" method="POST" action="{{ route('login') }}">
                         @csrf
@@ -36,7 +31,7 @@
                             @enderror
                         </div>
                         <div class="form-group mb-0 checkbox-checked d-flex justify-content-between align-items-center">
-                           
+
                             <div class="text-end mt-3 w-100">
                                 <button class="btn btn-primary btn-block w-100" type="submit">{{ __('Sign in') }}</button>
                             </div>
