@@ -142,7 +142,7 @@ class FileController extends Controller
 
         $file->delete();
         Transaction::where('file_id', $file->id)->delete();
-        
+
         return redirect()->back()->with('success', __('File deleted successfully.'));
     }
 

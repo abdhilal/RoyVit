@@ -105,7 +105,7 @@
         <!-- Unlimited Color Picker -->
         <div class="customizer-color mb-3 p-2 rounded-3 b-t-primary border-3">
             <div class="color-picker mb-2">
-                <h4>Unlimited color:</h4>
+                <h4>تغيير اللون</h4>
             </div>
             <ul class="layout-grid customizer-color">
                 <li class="color-layout active" data-attr="color-1" data-primary="#308e87" data-secondary="#f39159"><div></div></li>

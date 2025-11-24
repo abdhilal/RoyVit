@@ -53,5 +53,9 @@ class Transaction extends Model
         return $this->belongsTo(File::class);
     }
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RepresentativeController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\RepresentativeMedicalController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/locale/{locale}', function (string $locale) {
@@ -27,9 +28,13 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-Route::get('/', function () {
-    return view('pages.welcome');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::get('/dashboard/stats', [DashboardController::class, 'stats'])
+    ->middleware(['auth'])
+    ->name('dashboard.stats');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

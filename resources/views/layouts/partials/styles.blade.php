@@ -32,5 +32,14 @@
         font-style: normal !important;
         font-variation-settings:"slnt" 0 !important;
     }
+    .dashboard-2 .card-fixed { max-height: 50vh; display: flex; flex-direction: column }
+    .dashboard-2 .card-fixed-tall { max-height: 50vh }
+    .dashboard-2 .card-fixed-half { max-height: 50vh }
+    .dashboard-2 .card-fixed .card-header { flex: 0 0 auto }
+    .dashboard-2 .card-fixed .card-body { flex: 1 1 auto; overflow: auto }
+    .dashboard-2 .card-fixed h3 { font-size: 1rem }
+    .dashboard-2 .card-fixed .table { font-size: .875rem }
+    .dashboard-2 .analytics-card .statistic-num h5 { font-size: 1rem }
+    .dashboard-2 .selling-product .recent-text h5 { font-size: 1rem }
 </style>
 @stack('styles')

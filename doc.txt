@@ -711,3 +711,296 @@ class Warehouse extends Model
 }
 
 
+
+
+   public function index(Request $request)
+    {
+        $areas = $this->areaService->getAreasForUser($request);
+
+
+
+        return view('pages.areas.index', compact('areas'));
+    }
+
+  public function getAreasForUser(Request $request = null, ?User $user = null)
+    {
+        $user = $user ?? auth()->user();
+        $fileId = getDefaultFileId();
+
+        $query = Area::with('warehouse')
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_income')
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_output')
+            ->whereHas('transactions', function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            });
+
+
+
+
+
+        if (!$user->hasPermissionTo('view-area')) {
+            $query->where('warehouse_id', $user->warehouse_id);
+        }
+
+        if ($request && $request->filled('search')) {
+            $this->applySearch($query, $request->input('search'));
+        }
+
+        return $query->latest()->paginate(20);
+    }
+
+
+       public function getPharmacies(Request $request = null)
+    {
+        $query = Pharmacy::query()->with(['warehouse', 'area', 'representative'])->where('warehouse_id', Auth::user()->warehouse_id)->whereHas('transactions', function ($q) {
+            $q->where('file_id', getDefaultFileId());
+        });
+        if ($request && $request->filled('search')) {
+            $this->applySearch($query, $request->input('search'));
+        }
+        return $query->latest()->paginate(20);
+    }
+
+        public function show(Pharmacy $pharmacy)
+    {
+        $warehouseId = auth()->user()->warehouse_id;
+        $fileId = getDefaultFileId();
+
+        // تحميل العلاقات الأساسية
+        $pharmacy->load(['warehouse', 'area', 'representative']);
+
+        // جلب العمليات paginated + علاقاتها
+        $transactions = $pharmacy->transactions()
+            ->with(['product', 'representative', 'file'])
+            ->where('warehouse_id', $warehouseId)
+            ->where('file_id', $fileId)
+            ->latest()
+            ->paginate(10);
+
+
+        // استعلام أساسي واحد بدل 4 استعلامات مكررة
+        $baseQuery = $pharmacy->transactions()
+            ->where('warehouse_id', $warehouseId)
+            ->where('file_id', $fileId);
+
+        // نجمع الإحصائيات بكفاءة
+        $stats = [
+            'transactions_count' => (int) $baseQuery->count(),
+            'value_income'       => (float) $baseQuery->sum('value_income'),
+            'value_output'       => (float) $baseQuery->sum('value_output'),
+            'value_gift'         => (float) $baseQuery->sum('value_gift'),
+            'quantity_product'   => (int) $baseQuery->sum('quantity_product'),
+            'quantity_gift'      => (int) $baseQuery->sum('quantity_gift'),
+
+            'sales_count'   => (int) $baseQuery->where('type', 'Wholesale Sale')->count(),
+            'returns_count' => (int) $baseQuery->where('type', 'Wholesale Return')->count(),
+        ];
+
+        return view('pages.pharmacies.partials.show', compact('pharmacy', 'transactions', 'stats'));
+    }
+
+
+    public function show(Area $area)
+    {
+        $area->load([
+            'warehouse',
+            'pharmacies.warehouse',
+            'pharmacies.representative',
+            'representatives.warehouse',
+            'transactions.product',
+            'transactions.pharmacy',
+            'transactions.representative',
+            'transactions.file',
+        ])->where('warehouse_id', Auth::user()->warehouse_id);
+
+        $stats = [
+            'transactions_count' => $area->transactions()->where('file_id', getDefaultFileId())->count(),
+            'value_income' => (float) $area->transactions()->where('file_id', getDefaultFileId())->sum('value_income'),
+            'value_output' => (float) $area->transactions()->where('file_id', getDefaultFileId())->sum('value_output'),
+            'value_gift' => (float) $area->transactions()->where('file_id', getDefaultFileId())->sum('value_gift'),
+            'quantity_product' => (int) $area->transactions()->where('file_id', getDefaultFileId())->sum('quantity_product'),
+            'quantity_gift' => (int) $area->transactions()->where('file_id', getDefaultFileId())->sum('quantity_gift'),
+            'sales_count' => $area->transactions()->where('file_id', getDefaultFileId())->where('type', 'Wholesale Sale')->count(),
+            'returns_count' => $area->transactions()->where('file_id', getDefaultFileId())->where('type', 'Wholesale Return')->count(),
+        ];
+
+
+        return view('pages.areas.partials.show', compact('area', 'stats'));
+    }
+
+        public function show(Representative $representative)
+    {
+
+        if ($representative->warehouse_id != auth()->user()->warehouse_id) {
+            abort(403);
+        }
+        $fileId = getDefaultFileId();
+
+        // جميع معاملات هذا المندوب على الملف الحالي
+        $transactions = Transaction::with(['product', 'pharmacy.area'])
+            ->where('representative_id', $representative->id)
+            ->where('file_id', $fileId)
+            ->get();
+
+        // استخراج ID الصيدليات التي لديها معاملات في هذا الملف
+        $pharmacyIds = $transactions->pluck('pharmacy_id')->unique();
+
+        // جلب الصيدليات التابعة لهذا المندوب ومرتبطة بالملف
+        $pharmacies = Pharmacy::with(['area'])
+            ->whereIn('id', $pharmacyIds)
+            ->get();
+
+        // حساب الإجمالي لكل صيدلية
+        $pharmacyTotals = $transactions->groupBy('pharmacy_id')->map(function ($ts) {
+            return [
+                'income' => (float) $ts->sum('value_income'),
+                'output' => (float) $ts->sum('value_output'),
+            ];
+        });
+
+        // حساب إحصائيات عامة
+        $date = [
+            'value_income' => (float) $transactions->sum('value_income'),
+            'value_output' => (float) $transactions->sum('value_output'),
+            'value_gift' => (float) $transactions->sum('value_gift'),
+            'quantity_gift' => (int) $transactions->sum('quantity_gift'),
+            'quantity_product' => (int) $transactions->sum('quantity_product'),
+            'Wholesale_Sale' => $transactions->where('type', 'Wholesale Sale')->count(),
+            'Wholesale_Return' => $transactions->where('type', 'Wholesale Return')->count(),
+        ];
+
+        // المناطق
+        $areas = Area::with('warehouse')->where('warehouse_id', Auth::user()->warehouse_id)
+            ->whereHas('representatives', fn($q) => $q->where('representative_id', $representative->id))
+            ->withSum(['transactions as income_sum' => fn($q) => $q->where('file_id', $fileId)], 'value_income')
+            ->withSum(['transactions as output_sum' => fn($q) => $q->where('file_id', $fileId)], 'value_output')
+            ->get();
+
+        return view('pages.representatives.partials.show', compact(
+            'representative',
+            'transactions',
+            'pharmacies',
+            'pharmacyTotals',
+            'areas',
+            'date'
+        ));
+    }
+
+      public function getRepresentatives(Request $request = null)
+    {
+        $fileId = getDefaultFileId();
+        $warehouseId = auth()->user()->warehouse_id;
+
+        $query = Representative::query()
+            ->where('type', 'sales')
+            ->where('warehouse_id', $warehouseId)
+
+            // تحميل العلاقات
+            ->with(['warehouse'])
+            ->withCount(['pharmacies', 'areas'])
+
+            // إجماليات الدخل والخرج
+            ->withSum(['transactions as total_income' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_income')
+
+            ->withSum(['transactions as total_output' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_output')
+
+            // يظهر فقط من لديه عمليات (حسب الفايل)
+            ->whereHas('transactions', function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            });
+
+        // البحث
+        if ($request && $request->filled('search')) {
+            $this->applySearch($query, $request->input('search'));
+        }
+
+        return $query->latest()->paginate(20);
+    }
+
+        public function index(Request $request)
+    {
+        $representativesMedical = $this->service->getRepresentativesMedical($request);
+
+        $repAreaTotals = [];
+        foreach ($representativesMedical as $rep) {
+            $areaIds = $rep->areas->pluck('id');
+            $repAreaTotals[$rep->id] = [
+                'income' => (float) Transaction::where('file_id', getDefaultFileId())->whereIn('area_id', $areaIds)->sum('value_income'),
+                'output' => (float) Transaction::where('file_id', getDefaultFileId())->whereIn('area_id', $areaIds)->sum('value_output'),
+            ];
+        }
+
+        return view('pages.representativesMedical.index', compact('representativesMedical', 'repAreaTotals'));
+    }
+
+   public function getRepresentativesMedical(Request $request = null)
+    {
+        $query = Representative::query()
+            ->with(['warehouse', 'areas'])->where('warehouse_id', auth()->user()->warehouse_id)
+            ->withCount(['areas'])
+            ->where('type', 'medical');
+
+        if ($request && $request->filled('search')) {
+            $this->applySearch($query, $request->input('search'));
+        }
+
+        return $query->latest()->paginate(20);
+    }
+
+       public function show($representativeId)
+    {
+
+        // جلب المندوب العلمي مع المخزن والمناطق
+        $representative = Representative::with(['warehouse', 'areas'])->findOrFail($representativeId);
+        if ($representative->warehouse_id != auth()->user()->warehouse_id) {
+            abort(403);
+        }
+        $fileId = getDefaultFileId();
+        $areaIds = $representative->areas->pluck('id');
+
+        // جلب كل المعاملات الموجودة في مناطق هذا المندوب حسب الملف
+        $transactions = Transaction::with(['product', 'pharmacy', 'file'])
+            ->where('file_id', $fileId)
+            ->whereIn('area_id', $areaIds)
+            ->get();
+
+        // جلب المناطق مع مجموع الدخل والخرج لكل منطقة بناءً على نفس الملف
+        $areas = Area::with('warehouse')
+            ->whereIn('id', $areaIds)
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_income')
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_output')
+            ->get();
+
+        // حساب المجموعات لجميع المعاملات في المناطق
+        $date = [
+            'value_income' => (float) $transactions->sum('value_income'),
+            'value_output' => (float) $transactions->sum('value_output'),
+            'value_gift' => (float) $transactions->sum('value_gift'),
+            'quantity_gift' => (int) $transactions->sum('quantity_gift'),
+            'quantity_product' => (int) $transactions->sum('quantity_product'),
+            'Wholesale_Sale' => $transactions->where('type', 'Wholesale Sale')->count(),
+            'Wholesale_Return' => $transactions->where('type', 'Wholesale Return')->count(),
+        ];
+
+        return view('pages.representativesMedical.partials.show', compact(
+            'representative',
+            'transactions',
+            'date',
+            'areas'
+        ));
+    }
+
+
+
