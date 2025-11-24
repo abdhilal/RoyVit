@@ -40,35 +40,11 @@ class WarehouseSeeder extends Seeder
 
 
 
-        $warehousesData = [];
 
 
-        $warehousesData[] = [
-            'name' => 'مستودع حلب الشمالي',
-            'location' => 'حلب - شمال',
-
-        ];
 
 
-        $warehousesData[] = [
-            'name' => 'مستودع STP-Bazar',
-            'location' => 'STP - بزاري',
 
-        ];
-
-
-        $warehousesData[] = [
-            'name' => 'مستودع اسطنبول الأوروبي',
-            'location' => 'اسطنبول -وروبا',
-
-        ];
-
-
-        // إضافة المستودعات إلى قاعدة البيانات
-        foreach ($warehousesData as $warehouse) {
-            // Create or update warehouse
-            $warehouseModel = Warehouse::updateOrCreate($warehouse);
-        }
 
         // ------------------ إضافة مناطق ------------------
     }

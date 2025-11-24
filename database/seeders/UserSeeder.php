@@ -108,7 +108,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'المدير العام',
                 'password' => Hash::make('password'),
-                'warehouse_id' => warehouse::first()->id, // لا ينتمي لأي مستودع
+                'warehouse_id' => null, // لا ينتمي لأي مستودع
             ]
         );
         $userRole->syncPermissions($permissionOnly);
@@ -119,19 +119,7 @@ class UserSeeder extends Seeder
 
         $adminRole->syncPermissions(Permission::whereNotIn('name', ['view-all-warehouses'])->get());
         // إنشاء مدراء لكل مستودع
-        $warehouses = Warehouse::all();
 
-        foreach ($warehouses as $index => $warehouse) {
-            $user = User::firstOrCreate(
-                ['email' => 'admin' . $index . '@stl.com'],
-                [
-                    'name' => 'مدير ' . $warehouse->name,
-                    'password' => Hash::make('password'),
-                    'warehouse_id' => $warehouse->id,
-                ]
-            );
 
-            $user->assignRole($adminRole);
-        }
     }
 }

@@ -34,17 +34,8 @@ class PharmacySeeder extends Seeder
         $adminRole->givePermissionTo($permissions);
         $superAdminRole->givePermissionTo($permissions);
 
-        $wh = Warehouse::orderBy('id')->first();
-        $area = Area::orderBy('id')->first();
-        $rep = User::role('Representative')->orderBy('id')->first();
 
-        if ($wh && $area) {
-            Pharmacy::firstOrCreate([
-                'name' => 'صيدلية المركز',
-                'warehouse_id' => $wh->id,
-                'area_id' => $area->id,
-                'representative_id' => $rep?->id,
-            ]);
-        }
+
+
     }
 }

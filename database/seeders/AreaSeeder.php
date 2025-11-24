@@ -29,24 +29,5 @@ class AreaSeeder extends Seeder
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'group_name' => 'Area']);
         }
-
-        $whAleppo = Warehouse::where('name', 'مستودع حلب الشمالي')->first();
-        $whStp = Warehouse::where('name', 'مستودع STP-Bazar')->first();
-        $whIstanbul = Warehouse::where('name', 'مستودع اسطنبول الأوروبي')->first();
-
-        $areasData = [];
-        if ($whAleppo) {
-            $areasData[] = ['name' => 'منطقة حلب - A', 'warehouse_id' => $whAleppo->id];
-            $areasData[] = ['name' => 'منطقة حلب - B', 'warehouse_id' => $whAleppo->id];
-        }
-        if ($whStp) {
-            $areasData[] = ['name' => 'منطقة STP - A', 'warehouse_id' => $whStp->id];
-        }
-        if ($whIstanbul) {
-            $areasData[] = ['name' => 'منطقة اسطنبول - A', 'warehouse_id' => $whIstanbul->id];
-            $areasData[] = ['name' => 'منطقة اسطنبول - B', 'warehouse_id' => $whIstanbul->id];
-        }
-
-
     }
 }

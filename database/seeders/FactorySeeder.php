@@ -26,14 +26,6 @@ class FactorySeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission, 'group_name' => 'Factory']);
         }
 
-        $factoriesData = [
-            ['name' => 'مصنع الشمال'],
-            ['name' => 'مصنع STP'],
-            ['name' => 'مصنع اسطنبول الأوروبي'],
-        ];
 
-        foreach ($factoriesData as $factory) {
-            Factory::firstOrCreate(['name' => $factory['name']], $factory);
-        }
     }
 }

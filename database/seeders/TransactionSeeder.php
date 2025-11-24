@@ -40,25 +40,8 @@ class TransactionSeeder extends Seeder
         $adminRole->givePermissionTo($permissions);
         $superAdminRole->givePermissionTo($permissions);
 
-        $warehouse = Warehouse::orderBy('id')->first();
-        $factory = Factory::orderBy('id')->first();
-        $pharmacy = Pharmacy::orderBy('id')->first();
-        $representative = User::role('Representative')->orderBy('id')->first();
-        $product = Product::orderBy('id')->first();
 
-        if ($warehouse && $factory && $pharmacy && $representative && $product) {
-            Transaction::firstOrCreate([
-                'warehouse_id' => $warehouse->id,
-                'factory_id' => $factory->id,
-                'pharmacy_id' => $pharmacy->id,
-                'representative_id' => $representative->id,
-                'product_id' => $product->id,
-                'type' => 'Wholesale Sale',
-            ], [
-                'quantity' => 0,
-                'value' => 0,
-                'gift_value' => 0,
-            ]);
-        }
+
+
     }
 }

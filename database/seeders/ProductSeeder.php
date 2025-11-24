@@ -34,17 +34,7 @@ class ProductSeeder extends Seeder
         $adminRole->givePermissionTo($permissions);
         $superAdminRole->givePermissionTo($permissions);
 
-        $factory = Factory::orderBy('id')->first();
-        $warehouse = Warehouse::orderBy('id')->first();
 
-        if ($factory && $warehouse) {
-            Product::firstOrCreate([
-                'name' => 'منتج تجريبي',
-                'factory_id' => $factory->id,
-                'warehouse_id' => $warehouse->id,
-            ], [
-                'unit_price' => 0,
-            ]);
-        }
+
     }
 }
