@@ -1,4 +1,4 @@
-<aside class="page-sidebar">
+<aside class="page-sidebar" style="top: -2%;">
     <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
     <div class="main-sidebar" id="main-sidebar">
         <ul class="sidebar-menu" id="simple-bar">

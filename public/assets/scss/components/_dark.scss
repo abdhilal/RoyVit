@@ -74,7 +74,7 @@
     }
     .fc-timegrid-event-harness-inset {
         .fc-timegrid-event {
-            border: 1px solid var(--border-color);
+            border: 10px solid var(--border-color);
             box-shadow: none;
         }
     }
@@ -94,7 +94,7 @@
             }
             td {
                 border: none;
-            } 
+            }
         }
     }
     .checkout {
