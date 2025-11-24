@@ -30,25 +30,29 @@ class RepresentativeController extends Controller
         return view('pages.representatives.index', compact('representatives'));
     }
 
-    public function create()
-    {
-        $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->get();
-        return view('pages.representatives.partials.create', compact('warehouses', 'areas'));
-    }
+    // public function create()
+    // {
+    //     $warehouses = Warehouse::orderBy('name')->get();
+    //     $areas = Area::orderBy('name')->get();
+    //     return view('pages.representatives.partials.create', compact('warehouses', 'areas'));
+    // }
 
-    public function store(StoreRepresentativeRequest $request)
-    {
-        $data = $request->validated();
-        $user = $this->service->createRepresentative($data);
-        return redirect()->route('representatives.index')
-            ->with('success', __('Representative created successfully.'));
-    }
+    // public function store(StoreRepresentativeRequest $request)
+    // {
+    //     $data = $request->validated();
+    //     $user = $this->service->createRepresentative($data);
+    //     return redirect()->route('representatives.index')
+    //         ->with('success', __('Representative created successfully.'));
+    // }
 
 
 
     public function show(Representative $representative)
     {
+
+        if ($representative->warehouse_id != auth()->user()->warehouse_id) {
+            abort(403);
+        }
         $fileId = getDefaultFileId();
 
         // جميع معاملات هذا المندوب على الملف الحالي
@@ -103,26 +107,26 @@ class RepresentativeController extends Controller
 
 
 
-    public function edit(Representative $representative)
-    {
-        $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->get();
-        return view('pages.representatives.partials.edit', compact('representative', 'warehouses', 'areas'));
-    }
+    // public function edit(Representative $representative)
+    // {
+    //     $warehouses = Warehouse::orderBy('name')->get();
+    //     $areas = Area::orderBy('name')->get();
+    //     return view('pages.representatives.partials.edit', compact('representative', 'warehouses', 'areas'));
+    // }
 
-    public function update(UpdateRepresentativeRequest $request, Representative $representative)
-    {
-        $data = $request->validated();
+    // public function update(UpdateRepresentativeRequest $request, Representative $representative)
+    // {
+    //     $data = $request->validated();
 
-        $this->service->updateRepresentative($representative, $data);
-        return redirect()->route('representatives.index')
-            ->with('success', __('Representative updated successfully.'));
-    }
+    //     $this->service->updateRepresentative($representative, $data);
+    //     return redirect()->route('representatives.index')
+    //         ->with('success', __('Representative updated successfully.'));
+    // }
 
-    public function destroy(Representative $representative)
-    {
-        $this->service->deleteRepresentative($representative);
-        return redirect()->back()
-            ->with('success', __('Representative deleted successfully.'));
-    }
+    // public function destroy(Representative $representative)
+    // {
+    //     $this->service->deleteRepresentative($representative);
+    //     return redirect()->back()
+    //         ->with('success', __('Representative deleted successfully.'));
+    // }
 }

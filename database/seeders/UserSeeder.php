@@ -17,29 +17,75 @@ class UserSeeder extends Seeder
 
         // صلاحيات المستخدمين
         $userPermissions = [
-            'view-user', 'create-user', 'edit-user', 'delete-user', 'show-user','force-delete-user','restore-user',
+            'view-user',
+            'create-user',
+            'edit-user',
+            'delete-user',
+            'show-user',
+            'force-delete-user',
+            'restore-user',
         ];
 
         $rolePermissions = [
-            'view-role', 'create-role', 'edit-role', 'delete-role', 'show-role',
+            'view-role',
+            'create-role',
+            'edit-role',
+            'delete-role',
+            'show-role',
         ];
 
         $settingPermissions = [
-            'view-setting', 'create-setting', 'edit-setting', 'delete-setting', 'show-setting',
+            'view-setting',
+            'create-setting',
+            'edit-setting',
+            'delete-setting',
+            'show-setting',
         ];
 
-        $profilePermissions = [ 
-            'edit-profile', 'show-profile', 'change-password',
+        $profilePermissions = [
+            'edit-profile',
+            'show-profile',
+            'change-password',
         ];
         $warehousesPermissions = [
             'view-all-warehouses'
+
+        ];
+        $permissionOnly = [
+            'show-area',
+            'view-area',
+            'show-factory',
+            'view-factory',
+            'view-file',
+            'create-file',
+            'delete-file',
+            'show-file',
+            'view-pharmacy',
+            'show-pharmacy',
+            'view-product',
+            'show-product',
+            'view-representative',
+            'create-representative',
+            'edit-representative',
+            'delete-representative',
+            'show-representative',
+            'show-transaction',
+            'view-transaction',
+
         ];
         // إنشاء الصلاحيات
-        foreach ($userPermissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'group_name' => 'User']);
+        foreach ($permissionOnly as $permission) {
+            Permission::firstOrCreate(
+                ['name' => $permission, 'guard_name' => 'web'], // <-- إضافة guard_name
+                ['group_name' => 'User']
+            );
         }
+
         foreach ($rolePermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'group_name' => 'Role']);
+        }
+        foreach ($userPermissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'group_name' => 'User']);
         }
         foreach ($settingPermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'group_name' => 'Setting']);
@@ -53,6 +99,8 @@ class UserSeeder extends Seeder
         // إنشاء الأدوار
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $adminRole      = Role::firstOrCreate(['name' => 'admin']);
+        $userRole       = Role::firstOrCreate(['name' => 'User']); // <- إضافة هذا السطر
+
 
         // إنشاء المستخدم Super Admin (بدون مستودع)
         $superAdminUser = User::firstOrCreate(
@@ -63,8 +111,11 @@ class UserSeeder extends Seeder
                 'warehouse_id' => warehouse::first()->id, // لا ينتمي لأي مستودع
             ]
         );
+        $userRole->syncPermissions($permissionOnly);
+
         $superAdminUser->assignRole($superAdminRole);
         $superAdminRole->syncPermissions(Permission::all());
+
 
         $adminRole->syncPermissions(Permission::whereNotIn('name', ['view-all-warehouses'])->get());
         // إنشاء مدراء لكل مستودع
@@ -72,9 +123,9 @@ class UserSeeder extends Seeder
 
         foreach ($warehouses as $index => $warehouse) {
             $user = User::firstOrCreate(
-                ['email' => 'admin'.$index.'@stl.com'],
+                ['email' => 'admin' . $index . '@stl.com'],
                 [
-                    'name' => 'مدير '.$warehouse->name,
+                    'name' => 'مدير ' . $warehouse->name,
                     'password' => Hash::make('password'),
                     'warehouse_id' => $warehouse->id,
                 ]

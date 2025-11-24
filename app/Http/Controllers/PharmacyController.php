@@ -31,23 +31,23 @@ class PharmacyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->get();
-        $representatives = Representative::orderBy('name')->get();
-        return view('pages.pharmacies.partials.create', compact('warehouses', 'areas', 'representatives'));
-    }
+    // public function create()
+    // {
+    //     $warehouses = Warehouse::orderBy('name')->get();
+    //     $areas = Area::orderBy('name')->get();
+    //     $representatives = Representative::orderBy('name')->get();
+    //     return view('pages.pharmacies.partials.create', compact('warehouses', 'areas', 'representatives'));
+    // }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePharmacyRequest $request)
-    {
-        $pharmacy = $this->service->createPharmacy($request->validated());
-        return redirect()->route('pharmacies.index')
-            ->with('success', __('Pharmacy created successfully.'));
-    }
+    // public function store(StorePharmacyRequest $request)
+    // {
+    //     $pharmacy = $this->service->createPharmacy($request->validated());
+    //     return redirect()->route('pharmacies.index')
+    //         ->with('success', __('Pharmacy created successfully.'));
+    // }
 
     /**
      * Display the specified resource.
@@ -94,31 +94,31 @@ class PharmacyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pharmacy $pharmacy)
-    {
-        $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->get();
-        $representatives = Representative::orderBy('name')->get();
-        return view('pages.pharmacies.partials.edit', compact('pharmacy', 'warehouses', 'areas', 'representatives'));
-    }
+    // public function edit(Pharmacy $pharmacy)
+    // {
+    //     $warehouses = Warehouse::orderBy('name')->get();
+    //     $areas = Area::orderBy('name')->get();
+    //     $representatives = Representative::orderBy('name')->get();
+    //     return view('pages.pharmacies.partials.edit', compact('pharmacy', 'warehouses', 'areas', 'representatives'));
+    // }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePharmacyRequest $request, Pharmacy $pharmacy)
-    {
-        $this->service->updatePharmacy($pharmacy, $request->validated());
-        return redirect()->route('pharmacies.index')
-            ->with('success', __('Pharmacy updated successfully.'));
-    }
+    // public function update(UpdatePharmacyRequest $request, Pharmacy $pharmacy)
+    // {
+    //     $this->service->updatePharmacy($pharmacy, $request->validated());
+    //     return redirect()->route('pharmacies.index')
+    //         ->with('success', __('Pharmacy updated successfully.'));
+    // }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pharmacy $pharmacy)
-    {
-        $this->service->deletePharmacy($pharmacy);
-        return redirect()->back()
-            ->with('success', __('Pharmacy deleted successfully.'));
-    }
+    // public function destroy(Pharmacy $pharmacy)
+    // {
+    //     $this->service->deletePharmacy($pharmacy);
+    //     return redirect()->back()
+    //         ->with('success', __('Pharmacy deleted successfully.'));
+    // }
 }

@@ -64,7 +64,7 @@ class RepresentativeMedicalService
     public function getRepresentativesMedical(Request $request = null)
     {
         $query = Representative::query()
-            ->with(['warehouse', 'areas'])
+            ->with(['warehouse', 'areas'])->where('warehouse_id', auth()->user()->warehouse_id)
             ->withCount(['areas'])
             ->where('type', 'medical');
 

@@ -28,54 +28,54 @@ class FactoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('pages.factories.partials.create');
-    }
+    // public function create()
+    // {
+    //     return view('pages.factories.partials.create');
+    // }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFactoryRequest $request)
-    {
-        $factory = $this->factoryService->createFactory($request->validated());
-        return redirect()->route('factories.index')
-            ->with('success', __('Factory created successfully.'));
-    }
+    // public function store(StoreFactoryRequest $request)
+    // {
+    //     $factory = $this->factoryService->createFactory($request->validated());
+    //     return redirect()->route('factories.index')
+    //         ->with('success', __('Factory created successfully.'));
+    // }
 
     /**
      * Display the specified resource.
      */
-    public function show(Factory $factory)
-    {
-        return view('pages.factories.partials.show', compact('factory'));
-    }
+    // public function show(Factory $factory)
+    // {
+    //     return view('pages.factories.partials.show', compact('factory'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Factory $factory)
-    {
-        return view('pages.factories.partials.edit', compact('factory'));
-    }
+    // public function edit(Factory $factory)
+    // {
+    //     return view('pages.factories.partials.edit', compact('factory'));
+    // }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFactoryRequest $request, Factory $factory)
-    {
-        $this->factoryService->updateFactory($factory, $request->validated());
-        return redirect()->route('factories.index')
-            ->with('success', __('Factory updated successfully.'));
-    }
+    // public function update(UpdateFactoryRequest $request, Factory $factory)
+    // {
+    //     $this->factoryService->updateFactory($factory, $request->validated());
+    //     return redirect()->route('factories.index')
+    //         ->with('success', __('Factory updated successfully.'));
+    // }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Factory $factory)
-    {
-        $this->factoryService->deleteFactory($factory);
-        return redirect()->back()
-            ->with('success', __('Factory deleted successfully.'));
-    }
+    // public function destroy(Factory $factory)
+    // {
+    //     $this->factoryService->deleteFactory($factory);
+    //     return redirect()->back()
+    //         ->with('success', __('Factory deleted successfully.'));
+    // }
 }

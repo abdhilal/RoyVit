@@ -5,17 +5,24 @@ namespace App\Services;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AreaService
 {
     public function getAreasForUser(Request $request = null, ?User $user = null)
     {
         $user = $user ?? auth()->user();
-        $query = Area::with('warehouse', 'transactions')
-            ->withSum('transactions', 'value_income')
-            ->withSum('transactions', 'value_output')
-            ->whereHas('transactions', function ($q) {
-                $q->where('file_id', getDefaultFileId());
+        $fileId = getDefaultFileId();
+
+        $query = Area::with('warehouse')
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_income')
+            ->withSum(['transactions' => function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
+            }], 'value_output')
+            ->whereHas('transactions', function ($q) use ($fileId) {
+                $q->where('file_id', $fileId);
             });
 
 

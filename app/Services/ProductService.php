@@ -9,7 +9,7 @@ class ProductService
 {
     public function getProducts(Request $request = null)
     {
-        $query = Product::query()->with(['factory', 'warehouse']);
+        $query = Product::query()->with(['factory', 'warehouse'])->where('warehouse_id', auth()->user()->warehouse_id);
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));
         }

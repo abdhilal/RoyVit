@@ -34,22 +34,8 @@ class RepresentativeSeeder extends Seeder
 
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
+        $superUserRole = Role::firstOrCreate(['name' => 'User']);
         $adminRole->givePermissionTo($permissions);
-        $superAdminRole->givePermissionTo($permissions);
-
-        $whAleppo = Warehouse::where('name', 'مستودع حلب الشمالي')->first();
-        $whStp = Warehouse::where('name', 'مستودع STP-Bazar')->first();
-        $whIstanbul = Warehouse::where('name', 'مستودع اسطنبول الأوروبي')->first();
-
-
-
-
-        if ($whIstanbul) {
-            Representative::create([
-                'name' => 'مندوب اسطنبول',
-                'type' => 'sales',
-                'warehouse_id' => $whIstanbul->id,
-            ]);
-        }
+        $superUserRole->givePermissionTo($permissions);
     }
 }

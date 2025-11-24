@@ -167,5 +167,11 @@
     "Select File": "اختر الملف",
     "Representative Medical updated successfully.": "تم تحديث المندوب العلمي بنجاح.",
     "Are you sure?": "هل أنت متأكد؟",
-    "You won't be able to revert this!": "لا يمكنك التراجع عن هذا!"
+    "You won't be able to revert this!": "لا يمكنك التراجع عن هذا!",
+    "File imported successfully.": "تم استيراد الملف بنجاح.",
+
+    "Search by pharmacy name or area":"بحث حسب اسم الصيدلية او المنطقة",
+    "Reset":"مسح",
+    "Pharmacy details":"تفاصيل الصيدلية"
+
 }

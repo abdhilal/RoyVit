@@ -41,7 +41,7 @@ class RepresentativeMedicalController extends Controller
     public function create()
     {
         $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->doesntHave('medicalReps')->get();
+        $areas = Area::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('name')->doesntHave('medicalReps')->get();
 
         return view('pages.representativesMedical.partials.create', compact('warehouses', 'areas'));
     }
@@ -58,9 +58,12 @@ class RepresentativeMedicalController extends Controller
 
     public function show($representativeId)
     {
+
         // جلب المندوب العلمي مع المخزن والمناطق
         $representative = Representative::with(['warehouse', 'areas'])->findOrFail($representativeId);
-
+        if ($representative->warehouse_id != auth()->user()->warehouse_id) {
+            abort(403);
+        }
         $fileId = getDefaultFileId();
         $areaIds = $representative->areas->pluck('id');
 
@@ -105,9 +108,9 @@ class RepresentativeMedicalController extends Controller
 
     public function edit($representativeId)
     {
-        $representative = Representative::with(['warehouse', 'areas'])->find($representativeId);
-        $warehouses = Warehouse::orderBy('name')->get();
-        $areas = Area::orderBy('name')->get();
+        $representative = Representative::with(['areas'])->find($representativeId);
+        $areas = Area::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('name')->get();
+
         return view('pages.representativesMedical.partials.edit', compact('representative', 'warehouses', 'areas'));
     }
 

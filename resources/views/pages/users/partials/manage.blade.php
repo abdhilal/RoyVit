@@ -24,7 +24,7 @@
                         <x-select name="user" label="{{ __('Select User') }}" :options="$users->pluck('name', 'id')->toArray()" :value="optional($selectedUser)->id" placeholder="{{ __('Choose...') }}" col="6" id="user" onchange="this.form.submit()" />
                     </x-form>
 
-                    @if($selectedUser)
+                @if($selectedUser)
                         <x-form :action="route('users.permissions.update', $selectedUser)" method="POST" class="row g-3">
                             <div class="col-12 d-flex align-items-center justify-content-between">
                                 <strong>{{ __('Permissions') }}</strong>
@@ -57,6 +57,26 @@
                                     </div>
                                 </div>
                             @endforeach
+
+                            <div class="col-12 d-flex align-items-center justify-content-between mt-3">
+                                <strong>{{ __('Roles') }}</strong>
+                            </div>
+                            <div class="col-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            @foreach($roles as $role)
+                                                <div class="col-md-4">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="role_{{ $role->id }}" name="roles[]" value="{{ $role->name }}" @checked(in_array($role->name, $selectedRoles))>
+                                                        <label class="form-check-label" for="role_{{ $role->id }}">{{ __($role->name) }}</label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>

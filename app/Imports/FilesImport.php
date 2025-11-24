@@ -50,14 +50,18 @@ class FilesImport implements OnEachRow
 
         // 2️⃣ المنطقة
         $area = Area::firstOrCreate(
-            ['name' => $areaName??'بدون منطقة', 'warehouse_id' => $this->warehouseId]
+            ['name' => $areaName ?? 'بدون منطقة', 'warehouse_id' => $this->warehouseId]
         );
 
         // 3️⃣ المندوب
         $representative = Representative::firstOrCreate(
-            ['name' => $representativeName??'بدون مندوب'],
             [
+                'name' => $representativeName ?? 'بدون مندوب',
                 'warehouse_id' => $this->warehouseId,
+            ],
+
+
+            [
                 'type' => 'sales'
             ]
         );

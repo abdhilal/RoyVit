@@ -18,9 +18,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>{{ __('Representatives list') }}</h5>
-                        @can('create-representative')
-                            <x-create :action="route('representatives.create')" />
-                        @endcan
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -54,12 +52,7 @@
                                             @can('show-representative')
                                                 <x-show :action="route('representatives.show', $representative)" />
                                             @endcan
-                                            @can('edit-representative')
-                                                <x-edit :action="route('representatives.edit', $representative)" />
-                                            @endcan
-                                            @can('delete-representative')
-                                                <x-delete-form :action="route('representatives.destroy', $representative)" />
-                                            @endcan
+                                        
                                         </td>
                                     </tr>
                                 @empty

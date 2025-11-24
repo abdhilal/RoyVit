@@ -4,12 +4,20 @@ namespace App\Services;
 
 use App\Models\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FactoryService
 {
     public function getFactories(Request $request = null)
     {
-        $query = Factory::query();
+        $query = Factory::with(['products' => function ($q) {
+            // جلب فقط المنتجات الموجودة في مستودع المستخدم الحالي
+            $q->where('warehouse_id', Auth::user()->warehouse_id);
+        }])
+            ->whereHas('products', function ($q) {
+                // فلترة المصانع التي لديها منتجات في المستودع الحالي
+                $q->where('warehouse_id', Auth::user()->warehouse_id);
+            });
 
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));

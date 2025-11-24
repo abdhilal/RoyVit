@@ -9,7 +9,7 @@ class TransactionService
 {
     public function getTransactions(Request $request = null)
     {
-        $query = Transaction::query()->with(['warehouse', 'pharmacy', 'representative', 'product'])->where('file_id', getDefaultFileId());
+        $query = Transaction::query()->with(['warehouse', 'pharmacy', 'representative', 'product'])->where('file_id', getDefaultFileId())->where('warehouse_id', auth()->user()->warehouse_id);
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));
         }

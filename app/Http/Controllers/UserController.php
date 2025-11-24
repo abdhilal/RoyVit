@@ -14,6 +14,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\StoreRepresentativeRequest;
 use App\Http\Requests\UpdateRepresentativeRequest;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -83,21 +84,24 @@ class UserController extends Controller
 
 
 
-      public function managePermissions(Request $request)
+    public function managePermissions(Request $request)
     {
         $users = User::orderBy('name')->get();
         $selectedUserId = $request->query('user');
         $selectedUser = $selectedUserId ? User::find($selectedUserId) : null;
 
         $permissions = Permission::orderBy('group_name')->orderBy('name')->get();
+        $roles = Role::orderBy('name')->get();
         $direct = [];
         $viaRoles = [];
+        $selectedRoles = [];
         if ($selectedUser) {
             $direct = $selectedUser->getDirectPermissions()->pluck('name')->all();
             $viaRoles = $selectedUser->getPermissionsViaRoles()->pluck('name')->all();
+            $selectedRoles = $selectedUser->roles->pluck('name')->all();
         }
 
-        return view('pages.users.partials.manage', compact('users', 'selectedUser', 'permissions', 'direct', 'viaRoles'));
+        return view('pages.users.partials.manage', compact('users', 'selectedUser', 'permissions', 'roles', 'direct', 'viaRoles', 'selectedRoles'));
     }
 
     public function updatePermissions(Request $request, User $user)
@@ -105,8 +109,11 @@ class UserController extends Controller
         $data = $request->validate([
             'permissions' => ['array'],
             'permissions.*' => ['string'],
+            'roles' => ['array'],
+            'roles.*' => ['string'],
         ]);
 
+        $user->syncRoles($data['roles'] ?? []);
         $user->syncPermissions($data['permissions'] ?? []);
 
         return redirect()->route('users.permissions.manage', ['user' => $user->id])

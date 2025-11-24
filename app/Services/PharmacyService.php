@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Models\Pharmacy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PharmacyService
 {
     public function getPharmacies(Request $request = null)
     {
-        $query = Pharmacy::query()->with(['warehouse', 'area', 'representative'])->whereHas('transactions', function ($q) {
+        $query = Pharmacy::query()->with(['warehouse', 'area', 'representative'])->where('warehouse_id', Auth::user()->warehouse_id)->whereHas('transactions', function ($q) {
             $q->where('file_id', getDefaultFileId());
         });
         if ($request && $request->filled('search')) {
@@ -22,16 +23,11 @@ class PharmacyService
     {
         $query->where(function ($q) use ($term) {
             $q->where('name', 'LIKE', "%{$term}%")
-              ->orWhereHas('warehouse', function ($w) use ($term) {
-                  $w->where('name', 'LIKE', "%{$term}%");
-              })
-              ->orWhereHas('area', function ($a) use ($term) {
-                  $a->where('name', 'LIKE', "%{$term}%");
-              })
-              ->orWhereHas('representative', function ($r) use ($term) {
-                  $r->where('name', 'LIKE', "%{$term}%")
-                    ->orWhere('email', 'LIKE', "%{$term}%");
-              });
+
+                ->orWhereHas('area', function ($a) use ($term) {
+                    $a->where('name', 'LIKE', "%{$term}%");
+                });
+
         });
     }
 

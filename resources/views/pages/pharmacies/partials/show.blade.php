@@ -18,7 +18,6 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">{{ __('Pharmacy details') }}</h5>
         <div>
-          <x-edit :action="route('pharmacies.edit', $pharmacy)" />
           <x-back :action="route('pharmacies.index')" />
         </div>
       </div>

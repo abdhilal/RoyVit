@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Transaction;
 use App\Exports\FilesExport;
 use App\Imports\FilesImport;
 use Illuminate\Http\Request;
@@ -138,7 +139,10 @@ class FileController extends Controller
         if ($file->path) {
             Storage::disk('public')->delete($file->path);
         }
+
         $file->delete();
+        Transaction::where('file_id', $file->id)->delete();
+        
         return redirect()->back()->with('success', __('File deleted successfully.'));
     }
 
