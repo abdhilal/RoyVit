@@ -1,130 +1,154 @@
 <aside class="page-sidebar">
-  <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
-  <div class="main-sidebar" id="main-sidebar">
-    <ul class="sidebar-menu" id="simple-bar">
+    <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+    <div class="main-sidebar" id="main-sidebar">
+        <ul class="sidebar-menu" id="simple-bar">
 
-      <li class="pin-title sidebar-main-title">
-        <div>
-          <h5 class="f-w-700 sidebar-title">{{ __('Pinned') }}</h5>
-        </div>
-      </li>
+            <li class="pin-title sidebar-main-title">
+                <div>
+                    <h5 class="f-w-700 sidebar-title">{{ __('Pinned') }}</h5>
+                </div>
+            </li>
 
-      @foreach(config('sidebar') as $section)
+            @foreach (config('sidebar') as $section)
+                @if (!empty($section['title']))
+                    <li class="sidebar-main-title">
+                        <div>
 
-        @if(!empty($section['title']))
-          <li class="sidebar-main-title">
-            <div>
-              <h5 class="f-w-700 sidebar-title">{{ __($section['title']) }}</h5>
-            </div>
-          </li>
-        @endif
 
-        @foreach(($section['items'] ?? []) as $item)
+                            <h5 class="f-w-700 sidebar-title">
+                                @if (!empty($section['icon']))
+                                    {{-- أيقونة بجانب العنوان --}}
+                                    @php $sectionIcon = $section['icon']; @endphp
+                                    @if (str_starts_with($sectionIcon, '<i'))
+                                        {!! $sectionIcon !!}
+                                    @else
+                                        <svg class="stroke-icon">
+                                            <use href="{{ asset('assets/svg/iconly-sprite.svg#' . $sectionIcon) }}">
+                                            </use>
+                                        </svg>
+                                    @endif
+                                @endif {{ __($section['title']) }}
 
-          @php
-              // ------------------------------
-              // 🔐 التحقق من الصلاحيات للـ item
-              // ------------------------------
-              $allowed = true;
 
-              if(isset($item['permissions'])) {
-                  $allowed = false;
-                  foreach($item['permissions'] as $perm) {
-                      if(auth()->user()->can($perm)) {
-                          $allowed = true;
-                          break;
-                      }
-                  }
-              }
-          @endphp
+                            </h5>
+                        </div>
+                    </li>
+                @endif
 
-          @if(!$allowed)
-              @continue
-          @endif
+                @foreach ($section['items'] ?? [] as $item)
+                    @php
+                        // ------------------------------
+                        // 🔐 التحقق من الصلاحيات للـ item
+                        // ------------------------------
+                        $allowed = true;
 
-          @php
-            $hasChildren = !empty($item['children']);
-            $href = $hasChildren ? 'javascript:void(0)' : (isset($item['route']) ? route($item['route']) : ($item['url'] ?? '#'));
-            $icon = $item['icon'] ?? null;
-            $label = $item['label'] ?? '';
+                        if (isset($item['permissions'])) {
+                            $allowed = false;
+                            foreach ($item['permissions'] as $perm) {
+                                if (auth()->user()->can($perm)) {
+                                    $allowed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    @endphp
 
-            // تحديد هل العنصر أو أحد الأبناء Active
-            $itemActive = isset($item['route'])
-                ? request()->routeIs($item['route'])
-                : (isset($item['url']) ? request()->is(ltrim(parse_url($item['url'], PHP_URL_PATH) ?? '', '/')) : false);
+                    @if (!$allowed)
+                        @continue
+                    @endif
 
-            $open = $itemActive;
+                    @php
 
-            if ($hasChildren) {
-                foreach ($item['children'] as $c) {
-                    $cActive = isset($c['route'])
-                        ? request()->routeIs($c['route'])
-                        : (isset($c['url']) ? request()->is(ltrim(parse_url($c['url'], PHP_URL_PATH) ?? '', '/')) : false);
+                        $hasChildren = !empty($item['children']);
+                        $href = $hasChildren
+                            ? 'javascript:void(0)'
+                            : (isset($item['route'])
+                                ? route($item['route'])
+                                : $item['url'] ?? '#');
+                        $icon = $item['icon'] ?? null;
+                        $label = $item['label'] ?? '';
 
-                    if ($cActive) {
-                        $open = true;
-                        break;
-                    }
-                }
-            }
-          @endphp
+                        // تحديد هل العنصر أو أحد الأبناء Active
+                        $itemActive = isset($item['route'])
+                            ? request()->routeIs($item['route'])
+                            : (isset($item['url'])
+                                ? request()->is(ltrim(parse_url($item['url'], PHP_URL_PATH) ?? '', '/'))
+                                : false);
 
-          <li class="sidebar-list {{ $open ? 'active' : '' }}">
-            <i class="fa-solid fa-thumbtack"></i>
+                        $open = $itemActive;
 
-            <a class="sidebar-link"
-               href="{{ $href }}"
-               @if($hasChildren) aria-expanded="{{ $open ? 'true' : 'false' }}" @endif>
+                        if ($hasChildren) {
+                            foreach ($item['children'] as $c) {
+                                $cActive = isset($c['route'])
+                                    ? request()->routeIs($c['route'])
+                                    : (isset($c['url'])
+                                        ? request()->is(ltrim(parse_url($c['url'], PHP_URL_PATH) ?? '', '/'))
+                                        : false);
 
-              @if($icon)
-                <svg class="stroke-icon">
-                  <use href="{{ asset('assets/svg/iconly-sprite.svg#'.$icon) }}"></use>
-                </svg>
-              @endif
+                                if ($cActive) {
+                                    $open = true;
+                                    break;
+                                }
+                            }
+                        }
+                    @endphp
 
-              <h6 class="f-w-600"
-                  @if(!empty($item['color']))
-                    style="color: {{ $item['color'] }}"
-                  @endif>
-                {{ __($label) }}
-              </h6>
+                    <li class="sidebar-list {{ $open ? 'active' : '' }}">
+                        <i class="fa-solid fa-thumbtack"></i>
 
-              @if($hasChildren)
-                <i class="iconly-Arrow-Right-2 icli"></i>
-              @endif
-            </a>
+                        <a class="sidebar-link" href="{{ $href }}"
+                            @if ($hasChildren) aria-expanded="{{ $open ? 'true' : 'false' }}" @endif>
 
-            @if($hasChildren)
-              <ul class="sidebar-submenu" @if($open) style="display: block;" @endif>
-                @foreach($item['children'] as $child)
+                            @if ($icon)
+                                @if (str_starts_with($icon, '<i'))
+                                    {!! $icon !!} {{-- أيقونات من نوع Iconly أو HTML جاهز --}}
+                                @else
+                                    <svg class="stroke-icon">
+                                        <use href="{{ asset('assets/svg/iconly-sprite.svg#' . $icon) }}"></use>
+                                    </svg>
+                                @endif
+                            @endif
 
-                  @php
-                      $childHref = isset($child['route'])
-                          ? route($child['route'])
-                          : ($child['url'] ?? '#');
+                            <h6 class="f-w-600"
+                                @if (!empty($item['color'])) style="color: {{ $item['color'] }}" @endif>
+                                {{ __($label) }}
+                            </h6>
 
-                      $childActive = isset($child['route'])
-                          ? request()->routeIs($child['route'])
-                          : (isset($child['url']) ? request()->is(ltrim(parse_url($child['url'], PHP_URL_PATH) ?? '', '/')) : false);
-                  @endphp
+                            @if ($hasChildren)
+                                <i class="iconly-Arrow-Right-2 icli"></i>
+                            @endif
+                        </a>
 
-                  <li class="{{ $childActive ? 'active' : '' }}">
-                    <a href="{{ $childHref }}"
-                       @if(!empty($child['color']))
-                          style="color: {{ $child['color'] }}"
-                       @endif>
-                      {{ __($child['label'] ?? '') }}
-                    </a>
-                  </li>
+                        @if ($hasChildren)
+                            <ul class="sidebar-submenu"
+                                @if ($open) style="display: block;" @endif>
+                                @foreach ($item['children'] as $child)
+                                    @php
+                                        $childHref = isset($child['route'])
+                                            ? route($child['route'])
+                                            : $child['url'] ?? '#';
 
+                                        $childActive = isset($child['route'])
+                                            ? request()->routeIs($child['route'])
+                                            : (isset($child['url'])
+                                                ? request()->is(
+                                                    ltrim(parse_url($child['url'], PHP_URL_PATH) ?? '', '/'),
+                                                )
+                                                : false);
+                                    @endphp
+
+                                    <li class="{{ $childActive ? 'active' : '' }}">
+                                        <a href="{{ $childHref }}"
+                                            @if (!empty($child['color'])) style="color: {{ $child['color'] }}" @endif>
+                                            {{ __($child['label'] ?? '') }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </li>
                 @endforeach
-              </ul>
-            @endif
-          </li>
-
-        @endforeach
-
-      @endforeach
-    </ul>
-  </div>
+            @endforeach
+        </ul>
+    </div>
 </aside>
