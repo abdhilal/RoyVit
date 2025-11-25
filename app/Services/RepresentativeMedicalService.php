@@ -56,8 +56,9 @@ class RepresentativeMedicalService
         $areaRepresentatives = AreaRepresentative::insert($insertData);
     }
 
-    public function deleteRepresentativeMedical(Representative $representative): ?bool
+    public function deleteRepresentativeMedical($representativeId): ?bool
     {
+        $representative=Representative::find($representativeId);
         return $representative->delete();
     }
 

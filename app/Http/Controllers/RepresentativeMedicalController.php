@@ -111,7 +111,7 @@ class RepresentativeMedicalController extends Controller
         $representative = Representative::with(['areas'])->find($representativeId);
         $areas = Area::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('name')->get();
 
-        return view('pages.representativesMedical.partials.edit', compact('representative', 'warehouses', 'areas'));
+        return view('pages.representativesMedical.partials.edit', compact('representative', 'areas'));
     }
 
     public function update(UpdateRepresentativeRequest $request,  $representativeId)
@@ -123,9 +123,9 @@ class RepresentativeMedicalController extends Controller
             ->with('success', __('Representative Medical updated successfully.'));
     }
 
-    public function destroy(Representative $representative)
+    public function destroy($representativeId)
     {
-        $this->service->deleteRepresentativeMedical($representative);
+        $this->service->deleteRepresentativeMedical($representativeId);
         return redirect()->back()
             ->with('success', __('Representative deleted successfully.'));
     }

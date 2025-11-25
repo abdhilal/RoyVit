@@ -56,7 +56,7 @@
                                                 <x-edit :action="route('representativesMedical.edit', $representative)" />
                                             @endcan
                                             @can('delete-representative')
-                                                <x-delete-form :action="route('representatives.destroy', $representative)" />
+                                                <x-delete-form :action="route('representativesMedical.destroy', $representative)" />
                                             @endcan
                                         </td>
                                     </tr>
