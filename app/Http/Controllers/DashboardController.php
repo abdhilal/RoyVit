@@ -11,6 +11,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+
         $user = Auth::user();
         $warehouseId = $user->warehouse_id;
 
@@ -22,7 +23,7 @@ class DashboardController extends Controller
         $type = $request->filled('type') ? $request->string('type')->toString() : null;
 
         $fileKey = is_null($activeFileId) ? 'all' : $activeFileId;
-        $cacheKey = "dashboard_stats_sort_output_{$warehouseId}_{$fileKey}_{$type}";
+        $cacheKey = "dashboard_v2_stats_sort_output_{$warehouseId}_{$fileKey}_{$type}";
         $data = Cache::remember($cacheKey, 300, function () use ($warehouseId, $activeFileId, $type) {
             $query = Transaction::query()
                 ->where('warehouse_id', $warehouseId)
@@ -31,7 +32,6 @@ class DashboardController extends Controller
                 ->with(['area', 'pharmacy', 'product', 'representative']);
 
             $transactions = $query->get();
-
             $summary = [
                 'transactions' => $transactions->count(),
                 'value_income' => (float) $transactions->sum('value_income'),
@@ -83,12 +83,15 @@ class DashboardController extends Controller
                 ])->sortByDesc('output');
 
             $medical_reps_stats = Representative::where('warehouse_id', $warehouseId)
-                ->where('type', 'medical')
+                ->whereIn('type', ['medical'])
                 ->with('areas')
                 ->get()
-                ->map(function ($rep) use ($activeFileId) {
+                ->map(function ($rep) use ($activeFileId, $warehouseId) {
                     $areaIds = $rep->areas->pluck('id');
-                    $base = Transaction::whereIn('area_id', $areaIds);
+                    $base = Transaction::where('warehouse_id', $warehouseId);
+                    $base = $areaIds->isNotEmpty()
+                        ? $base->whereIn('area_id', $areaIds)
+                        : $base->where('representative_id', $rep->id);
                     $base = !is_null($activeFileId) ? $base->where('file_id', $activeFileId) : $base;
                     return [
                         'name'   => $rep->name,
@@ -97,6 +100,7 @@ class DashboardController extends Controller
                         'output' => (float) $base->sum('value_output'),
                     ];
                 })->sortByDesc('output');
+
 
             $areas_summary = Area::where('warehouse_id', $warehouseId)
                 ->withCount(['transactions' => function ($q) use ($activeFileId) { $q->when(!is_null($activeFileId), fn($qq) => $qq->where('file_id', $activeFileId)); }])
