@@ -1,6 +1,6 @@
 <header class="page-header row">
-    <div class="logo-wrapper d-flex align-items-center col-auto"><a
-            class="close-btn toggle-sidebar" href="javascript:void(0)">
+    <div class="logo-wrapper d-flex align-items-center col-auto"><a class="close-btn toggle-sidebar"
+            href="javascript:void(0)">
             <svg class="svg-color">
                 <use href="{{ asset('assets/svg/iconly-sprite.svg#Category') }}"></use>
             </svg></a></div>
@@ -86,7 +86,7 @@
 
                 <li class="profile-nav custom-dropdown">
                     <div class="user-wrap">
-                        <div class="user-img"><img src="{{ asset('assets/images/profile.png') }}" alt="user" />
+                        <div class="user-img"> <i class="fa-solid fa-user" style="font-size: 10px; color: #ffffff; background-color: var(--theme-default); padding: 8px 14px; border-radius: 50%;"></i>
                         </div>
                         <div class="user-content">
                             <h6>{{ auth()->user()->name }}</h6>
