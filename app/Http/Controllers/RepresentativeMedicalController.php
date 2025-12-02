@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\File;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\Transaction;
@@ -42,8 +43,9 @@ class RepresentativeMedicalController extends Controller
     {
         $warehouses = Warehouse::orderBy('name')->get();
         $areas = Area::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('name')->doesntHave('medicalReps')->get();
+        $files = File::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('month_year')->get();
 
-        return view('pages.representativesMedical.partials.create', compact('warehouses', 'areas'));
+        return view('pages.representativesMedical.partials.create', compact('warehouses', 'areas', 'files'));
     }
 
     public function store(StoreRepresentativeRequest $request)
@@ -110,8 +112,9 @@ class RepresentativeMedicalController extends Controller
     {
         $representative = Representative::with(['areas'])->find($representativeId);
         $areas = Area::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('name')->get();
+        $files = File::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('month_year')->get();
 
-        return view('pages.representativesMedical.partials.edit', compact('representative', 'areas'));
+        return view('pages.representativesMedical.partials.edit', compact('representative', 'areas', 'files'));
     }
 
     public function update(UpdateRepresentativeRequest $request,  $representativeId)

@@ -214,6 +214,9 @@
     "403 - Forbidden":"403 - ممنوع",
     "Sorry, You Don't Have Permission":"عذراً، ليس لديك صلاحية",
     "The page you are attempting to reach is currently not available. This may be because the page does not exist or has been moved.":"الصفحة التي تريد الوصول إليها غير متوفرة حاليًا. قد يكون ذلك بسبب عدم وجود الصفحة أو تم نقلها.",
-    "BACK TO HOME PAGE":"العودة إلى الصفحة الرئيسية"
+    "BACK TO HOME PAGE":"العودة إلى الصفحة الرئيسية",
+    "Working dates":"تواريخ العمل",
+    "Show All":"عرض الكل",
+    "Clear":"مسح"
 
 }

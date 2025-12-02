@@ -24,17 +24,9 @@ class RepresentativeMedicalService
         $representative =  Representative::create($data);
 
 
-        $insertData = [];
-
-        foreach ($data['area_ids'] as $area_id) {
-            $insertData[] = [
-                'representative_id' => $representative->id,
-                'area_id' => $area_id,
-            ];
-        }
-
-        $areaRepresentatives = AreaRepresentative::insert($insertData);
-        return $areaRepresentatives;
+        $representative->areas()->attach($data['area_ids']);
+        $representative->files()->attach($data['file_ids']);
+        return $representative;
     }
 
     public function updateRepresentativeMedical($representativeId, array $data)
@@ -42,37 +34,48 @@ class RepresentativeMedicalService
         $representative = Representative::find($representativeId);
         $representative->update(['name' => $data['name']]);
 
-        AreaRepresentative::where('representative_id', $representative->id)->delete();
+        $representative->areas()->detach();
+        $representative->files()->detach();
 
-
-        $insertData = [];
-
-        foreach ($data['area_ids'] as $area_id) {
-            $insertData[] = [
-                'representative_id' => $representative->id,
-                'area_id' => $area_id,
-            ];
-        }
-        $areaRepresentatives = AreaRepresentative::insert($insertData);
+        $representative->areas()->attach($data['area_ids']);
+        $representative->files()->attach($data['file_ids']);
+        return $representative;
     }
 
     public function deleteRepresentativeMedical($representativeId): ?bool
     {
-        $representative=Representative::find($representativeId);
+        $representative = Representative::find($representativeId);
         return $representative->delete();
     }
 
     public function getRepresentativesMedical(Request $request = null)
     {
+        // dd($request);
+
+
+        $currentFileId = getDefaultFileId();
+
         $query = Representative::query()
-            ->with(['warehouse', 'areas'])->where('warehouse_id', auth()->user()->warehouse_id)
-            ->withCount(['areas'])
+            ->with(['warehouse', 'areas'])
+            ->where('warehouse_id', auth()->user()->warehouse_id)
+            ->withCount('areas')
             ->where('type', 'medical');
+
+        if (!($request && $request->boolean('all'))) {
+            $query->whereHas('files', function ($q) use ($currentFileId) {
+                $q->where('file_id', $currentFileId);
+            });
+        }
 
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));
         }
 
-        return $query->latest()->paginate(20);
+        $perPage = 20;
+        if ($request && $request->boolean('all')) {
+            $perPage = max(1, (clone $query)->count());
+        }
+
+        return $query->latest()->paginate($perPage);
     }
 }

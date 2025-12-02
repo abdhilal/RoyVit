@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Exports\FilesExport;
 use App\Imports\FilesImport;
 use Illuminate\Http\Request;
+use App\Models\Representative;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreFileRequest;
@@ -57,6 +58,11 @@ class FileController extends Controller
             'warehouse_id' => auth()->user()->warehouse_id,
             'path'         => $path,
         ]);
+
+        $representatives = Representative::where('warehouse_id', auth()->user()->warehouse_id)->where('type', 'medical')->get();
+        $representatives->each(function ($representative) use ($fileRecord) {
+            $representative->files()->attach($fileRecord->id);
+        });
 
 
         Excel::import(new FilesImport($fileRecord->id, auth()->user()->warehouse_id), $file);

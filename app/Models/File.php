@@ -26,4 +26,8 @@ class File extends Model
     }
 
 
+    public function representatives()
+    {
+        return $this->belongsToMany(Representative::class, 'representative_file')->withTimestamps();
+    }
 }

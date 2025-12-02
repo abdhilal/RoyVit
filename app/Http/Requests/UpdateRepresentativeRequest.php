@@ -18,6 +18,8 @@ class UpdateRepresentativeRequest extends FormRequest
             'name' => 'required|string|max:150',
             'area_ids' => 'required|array|min:1',
             'area_ids.*' => 'exists:areas,id',
+            'file_ids' => 'required|array|min:1',
+            'file_ids.*' => 'exists:files,id',
         ];
     }
 }

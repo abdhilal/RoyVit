@@ -33,4 +33,10 @@ class Representative extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function files()
+    {
+        return $this->belongsToMany(File::class, 'representative_file')
+            ->withTimestamps();
+    }
 }
