@@ -69,15 +69,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/test',function(){
+// Route::get('/test',function(){
 
-    $files=File::all();
-    foreach($files as $file){
-        $file->month_year = $file->year . '-' . str_pad($file->month, 2, '0', STR_PAD_LEFT) . '-01';
-        $file->save();
-    }
-    return $file;
 
-});
+
+// });
 
 require __DIR__ . '/auth.php';

@@ -42,7 +42,7 @@ class FileController extends Controller
             $query->where('year', (int) $request->input('year'));
         }
 
-        $files = $query->latest()->paginate(20);
+        $files = $query->orderBy('month_year', 'desc')->latest()->paginate(20);
         return view('pages.files.index', compact('files'));
     }
 
