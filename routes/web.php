@@ -14,6 +14,7 @@ use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TreeProductController;
 use App\Http\Controllers\RepresentativeController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\RepresentativeMedicalController;
@@ -67,6 +68,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/files/download/{id}', [FileController::class, 'downloadFile'])->name('files.download');
     Route::get('/files/upload', [FileController::class, 'upload'])->name('files.upload');
     Route::post('/files/filter', [FileController::class, 'FileFilter'])->name('files.filter');
+
+    Route::get('/TreeProducts/index', [TreeProductController::class, 'index'])->name('TreeProducts.index');
+    Route::get('/TreeProducts/export', [TreeProductController::class, 'export'])->name('TreeProducts.export');
+    Route::post('/TreeProducts/store', [TreeProductController::class, 'store'])->name('TreeProducts.store');
+    Route::get('/TreeProducts/upload', [TreeProductController::class, 'upload'])->name('TreeProducts.upload');
+    Route::get('/TreeProducts/Management', [TreeProductController::class, 'Management'])->name('TreeProducts.Management');
+    Route::delete('/TreeProducts/destroy/{id}', [TreeProductController::class, 'destroy'])->name('TreeProducts.destroy');
+
+
+
 });
 
 

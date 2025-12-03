@@ -108,6 +108,11 @@ return [
                         'route' => 'products.index'
                     ],
                     [
+                        'label' => 'Tree Products',
+                        'icon'  => 'Package',
+                        'route' => 'TreeProducts.index'
+                    ],
+                    [
                         'label' => 'Files',
                         'icon'  => 'Paperclip',
                         'route' => 'files.index'

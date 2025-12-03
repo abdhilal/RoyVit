@@ -44,5 +44,10 @@ class Warehouse extends Model
     {
         return $this->hasMany(Representative::class);
     }
+
+    public function treeProducts()
+    {
+        return $this->hasMany(TreeProduct::class);
+    }
 }
 

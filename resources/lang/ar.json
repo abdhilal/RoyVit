@@ -218,6 +218,19 @@
     "Working dates":"تواريخ العمل",
     "Show All":"عرض الكل",
     "Clear":"مسح",
-    "Status":"الحالة"
+    "Status":"الحالة",
+    "Upload Tree Products":"رفع شجرة المنتجات",
+    "Tree Products":"شجرة المنتجات",
+    "User updated successfully.":"تم تحديث المستخدم بنجاح.",
+    "Warehouse created successfully.":"تم إنشاء المخزن بنجاح.",
+    "Tree Products uploaded successfully.":"تم رفع شجرة المنتجات بنجاح.",
+    "Bonus":"بونص",
+    "Regular price":"سعر النظامي",
+    "General price":"سعر العموم",
+    "Wholesale price":"سعر الجملة",
+    "Date":"التاريخ",
+    "Management":"إدارة الأشجار",
+    "Tree Products Manager":"إدارة شجرة المنتجات",
+    "No tree products found":"لم يتم العثور على شجرة المنتجات"
 
 }
