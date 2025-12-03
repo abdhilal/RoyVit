@@ -80,9 +80,15 @@ class AreaController extends Controller
                 ->where('area_id', $area->id) // هنا نحدد المناطق
                 ->get();
 
+            $value_income = (float) $filtered->sum('value_income');
+            $value_output = (float) $filtered->sum('value_output');
+            if ($value_income == 0 && $value_output == 0) {
+                continue;
+            }
+
             $summary[$file->id] = [
-                'value_income'     => (float) $filtered->sum('value_income'),
-                'value_output'     => (float) $filtered->sum('value_output'),
+                'value_income'     => $value_income,
+                'value_output'     => $value_output,
                 'date'             => $file->month_year,
             ];
         }
