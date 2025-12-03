@@ -56,7 +56,6 @@ class RepresentativeMedicalService
 
     public function getRepresentativesMedical(Request $request = null)
     {
-        // dd($request);
 
 
         $currentFileId = getDefaultFileId();

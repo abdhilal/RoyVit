@@ -19,28 +19,45 @@ class RepresentativeService
 
             // تحميل العلاقات
             ->with(['warehouse'])
-            ->withCount(['pharmacies', 'areas'])
+            ->withCount(['pharmacies', 'areas']);
 
-            // إجماليات الدخل والخرج
-            ->withSum(['transactions as total_income' => function ($q) use ($fileId) {
+        // إجماليات الدخل والخرج
+        if (!$request || !$request->boolean('all')) {
+            $query->withSum(['transactions as total_income' => function ($q) use ($fileId) {
                 $q->where('file_id', $fileId);
             }], 'value_income')
 
-            ->withSum(['transactions as total_output' => function ($q) use ($fileId) {
-                $q->where('file_id', $fileId);
-            }], 'value_output')
+                ->withSum(['transactions as total_output' => function ($q) use ($fileId) {
+                    $q->where('file_id', $fileId);
+                }], 'value_output');
+        }
+        // يظهر فقط من لديه عمليات (حسب الفايل)
+        if (!$request || !$request->boolean('all')) {
 
-            // يظهر فقط من لديه عمليات (حسب الفايل)
-            ->whereHas('transactions', function ($q) use ($fileId) {
+            $query->whereHas('transactions', function ($q) use ($fileId) {
                 $q->where('file_id', $fileId);
             });
+        }
 
         // البحث
         if ($request && $request->filled('search')) {
             $this->applySearch($query, $request->input('search'));
         }
 
-        return $query->latest()->paginate(20);
+        if ($request && $request->boolean('all')) {
+            $query->withSum([
+                'transactions as total_income',
+            ], 'value_income')
+
+                ->withSum([
+                    'transactions as total_output'
+                ], 'value_output');
+            $query->whereHas('transactions');
+
+            $perPage = max(1, (clone $query)->count());
+        }
+
+        return $query->latest()->paginate($perPage ?? 20);
     }
 
 

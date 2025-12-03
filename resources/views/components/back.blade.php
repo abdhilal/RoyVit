@@ -2,4 +2,4 @@
     'action' => '',
     'text' => 'back',
 ])
-<a href="{{ $action }}" class="btn btn-sm btn-outline-secondary">{{ __($text) }}</a>
+<a href="{{ $action }}" class="btn  btn-outline-secondary">{{ __($text) }}</a>

@@ -18,7 +18,16 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>{{ __('Representatives list') }}</h5>
+                        <div class="d-flex gap-2">
 
+                            @can('create-representative')
+                                <a href="{{ route('representatives.index', ['all' => 1]) }}"
+                                    class="btn btn-outline-secondary">{{ __('Show All') }}</a>
+                                <a href="{{ route('representatives.index') }}"
+                                    class="btn btn-outline-warning">{{ __('Clear') }}</a>
+                                <x-back :action="route('pharmacies.index')" />
+                            @endcan
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -40,7 +49,8 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>
-                                            <a href="{{ route('representatives.show', $representative) }}" class="text-decoration-none">
+                                            <a href="{{ route('representatives.show', $representative) }}"
+                                                class="text-decoration-none">
                                                 {{ $representative->name }}
                                             </a>
                                         </td>
@@ -52,7 +62,7 @@
                                             @can('show-representative')
                                                 <x-show :action="route('representatives.show', $representative)" />
                                             @endcan
-                                        
+
                                         </td>
                                     </tr>
                                 @empty
