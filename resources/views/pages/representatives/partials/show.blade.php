@@ -44,23 +44,13 @@
                 </div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-sm-12 col-xl-6 box-col-6">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-header card-no-border pb-0">
                                 <h3>{{ __('Bar Chart') }}</h3>
                             </div>
                             <div class="card-body apex-chart">
                                 <div id="rep-bar-chart"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6 box-col-6">
-                        <div class="card">
-                            <div class="card-header card-no-border pb-0">
-                                <h3>{{ __('Basic Area Chart') }}</h3>
-                            </div>
-                            <div class="card-body apex-chart">
-                                <div id="rep-area-chart"></div>
                             </div>
                         </div>
                     </div>
@@ -246,29 +236,6 @@
 
     var barChart = new ApexCharts(document.querySelector('#rep-bar-chart'), barOptions);
     barChart.render();
-
-    var netSeries = Object.values(barData).map(function (d) {
-      var out = parseFloat(d.value_output || 0);
-      var inc = parseFloat(d.value_income || 0);
-      return out - inc;
-    });
-
-    var areaOptions = {
-      series: [
-        { name: "{{ __('Net') }}", data: netSeries }
-      ],
-      chart: { type: 'area', height: 380, toolbar: { show: false } },
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth', width: 2 },
-      xaxis: { categories: categories },
-      yaxis: { labels: { formatter: function (val) { return Number(val).toFixed(2); } } },
-      colors: ['#51bb25'],
-      legend: { position: 'bottom' },
-      tooltip: { y: { formatter: function (val) { return Number(val).toFixed(2); } } }
-    };
-
-    var areaChart = new ApexCharts(document.querySelector('#rep-area-chart'), areaOptions);
-    areaChart.render();
   });
 </script>
 @endpush
