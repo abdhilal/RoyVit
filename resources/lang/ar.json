@@ -236,5 +236,7 @@
     "Tree Products uploaded successfully": "تم رفع شجرة المنتجات بنجاح.",
     "Tree Products deleted successfully": "تم حذف شجرة المنتجات بنجاح.",
     "Tree Product deleted successfully": "تم حذف شجرة المنتجات بنجاح.",
-    "Work Summary": "ملخص العمل"
+    "Work Summary": "ملخص العمل",
+    "Areas Summary":"ملخص المناطق",
+    "Total":"الإجمالي"
 }

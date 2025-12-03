@@ -14,7 +14,7 @@ class AreaService
         $user = $user ?? auth()->user();
         $fileId = getDefaultFileId();
 
-        $query = Area::with('warehouse')
+        $query = Area::with('warehouse')->where('warehouse_id', $user->warehouse_id)
             ->withSum(['transactions' => function ($q) use ($fileId) {
                 $q->where('file_id', $fileId);
             }], 'value_income')

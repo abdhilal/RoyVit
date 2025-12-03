@@ -27,9 +27,44 @@ class AreaController extends Controller
     {
         $areas = $this->areaService->getAreasForUser($request);
 
+        $files = File::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('month_year', 'desc')->get();
 
 
-        return view('pages.areas.index', compact('areas'));
+
+        $areasSummary = Area::with('transactions')->where('warehouse_id', auth()->user()->warehouse_id)->get();
+
+
+
+
+
+        $summary = [];
+
+        foreach ($areasSummary as $area) {
+            // جلب جميع المعاملات للملف الحالي والمناطق المحددة
+            $filtered = $area->transactions()->where('area_id', $area->id) // هنا نحدد المناطق
+                ->get();
+
+
+            $value_income = (float) $filtered->sum('value_income');
+            $value_output = (float) $filtered->sum('value_output');
+            $total = $value_output - $value_income;
+            if ($value_income == 0 && $value_output == 0) {
+                continue;
+            }
+
+            $summary[$area->id] = [
+                'id'               => $area->id,
+                'total'            => $total,
+                'name'             => $area->name,
+            ];
+        }
+
+
+
+
+
+
+        return view('pages.areas.index', compact('areas', 'summary'));
     }
 
     /**
@@ -66,6 +101,8 @@ class AreaController extends Controller
             'transactions.representative',
             'transactions.file',
         ])->where('warehouse_id', Auth::user()->warehouse_id);
+
+
 
         $files = File::where('warehouse_id', auth()->user()->warehouse_id)->orderBy('month_year', 'desc')->get();
 

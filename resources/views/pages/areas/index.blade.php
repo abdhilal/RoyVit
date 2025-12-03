@@ -22,6 +22,18 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header card-no-border pb-0">
+                                    <h4>{{ __('Areas Summary') }}</h4>
+                                </div>
+                                <div class="card-body apex-chart" style="overflow-x: auto; overflow-y: hidden; width: 90%;">
+                                    <div id="areas-summary-bar" style="min-width: 800px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -38,8 +50,7 @@
                                 @forelse ($areas as $index => $area)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td> <a href="{{ route('areas.show', $area) }}"
-                                                class="text-decoration-none">
+                                        <td> <a href="{{ route('areas.show', $area) }}" class="text-decoration-none">
                                                 {{ $area->name }}
                                             </a></td>
                                         <td>{{ $area->warehouse?->name }}</td>
@@ -69,3 +80,121 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function formatNumber(val) {
+                return Number(val).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            function getThemeTextColor() {
+                var cs = getComputedStyle(document.body);
+                var v = cs.getPropertyValue('--body-font-color');
+                return v && v.trim() ? v.trim() : '#222';
+            }
+            var labelColor = getThemeTextColor();
+
+            var raw = @json($summary ?? []);
+            var items = Object.values(raw).sort(function(a, b) {
+                return (a.total || 0) - (b.total || 0);
+            });
+            var categories = items.map(function(d) {
+                return d.name;
+            });
+            var seriesData = items.map(function(d) {
+                return parseFloat(d.total || 0);
+            });
+            var chartWidth = Math.max((categories.length || 1) * 80, 800);
+            var el = document.getElementById('areas-summary-bar');
+            if (el) el.style.minWidth = chartWidth + 'px';
+
+            var options = {
+                series: [{
+                    name: "{{ __('Total') }}",
+                    data: seriesData
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '40%',
+                        endingShape: 'rounded',
+                        dataLabels: {
+                            position: 'top'
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: formatNumber,
+                    offsetY: -25,
+                    style: {
+                        fontSize: '10px',
+                        colors: [labelColor]
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 1,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: categories,
+                    tickPlacement: 'on'
+                },
+                yaxis: {
+                    labels: {
+                        formatter: formatNumber
+                    },
+                    opposite: true
+                },
+                grid: {
+                    padding: {
+                        left: 0,
+                        right: 0
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                colors: ['#7366ff'],
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    y: {
+                        formatter: formatNumber
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector('#areas-summary-bar'), options);
+            chart.render();
+
+            var observer = new MutationObserver(function() {
+                labelColor = getThemeTextColor();
+                chart.updateOptions({
+                    dataLabels: {
+                        style: {
+                            colors: [labelColor]
+                        }
+                    }
+                });
+            });
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        });
+    </script>
+@endpush
