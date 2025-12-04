@@ -17,7 +17,7 @@
                         <option value="" @selected($active_file_id === null)>{{ __('All') }}</option>
                         @foreach ($files as $f)
                             <option value="{{ $f->id }}" @selected($active_file_id == $f->id)>
-                                {{ $f->code }} ({{ $f->month }}/{{ $f->year }})
+                                {{ $f->month_year }}
                                 @if ($f->is_default)
                                     - {{ __('Default') }}
                                 @endif

@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $type = $request->filled('type') ? $request->string('type')->toString() : null;
 
         $fileKey = is_null($activeFileId) ? 'all' : $activeFileId;
-        $cacheKey = "dashboard_v5_stats_sort_output_{$warehouseId}_{$fileKey}_{$type}";
+        $cacheKey = "dashboard_v6_stats_sort_output_{$warehouseId}_{$fileKey}_{$type}";
         $data = Cache::remember($cacheKey, 300, function () use ($warehouseId, $activeFileId, $type) {
             $query = Transaction::query()
                 ->where('warehouse_id', $warehouseId)
@@ -135,10 +135,9 @@ class DashboardController extends Controller
             ];
         });
 
-        $files = File::orderByDesc('is_default')
-            ->orderByDesc('year')
-            ->orderByDesc('month')
-            ->get(['id', 'code', 'month', 'year', 'is_default']);
+        $files = File::where('warehouse_id', $warehouseId)
+            ->orderByDesc('month_year')
+            ->get();
 
         return view('pages.welcome', array_merge($data, [
             'files' => $files,

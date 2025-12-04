@@ -30,14 +30,14 @@
                 <form action="{{ route('files.filter') }}" method="POST">
                     @csrf
                     <div class="input-group">
-                        <select name="file" class="form-select" id="inputGroupSelect04"
+                        <select name="file" class="form-select" id="inputGroupSelect04" style="width: 160px;"
                             aria-label="Example select with button addon">
                             <option value="">{{ __('Select File') }}</option>
 
                             @foreach ($files as $file)
                                 <option value="{{ $file->code }}"
                                     {{ isset($is_default) && $is_default->code == $file->code ? 'selected' : '' }}>
-                                    {{ $file->code }}
+                                    {{  $file->month_year }}
                                 </option>
                             @endforeach
                         </select>
